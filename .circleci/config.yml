@@ -108,10 +108,9 @@ jobs:
       - run:
           name: scan frontend
           command: |
-            exit 1
-            # cd frontend
-            # npm i
-            # npm audit 
+            cd frontend
+            npm i
+            npm audit 
             
 
   scan-backend:
@@ -124,13 +123,9 @@ jobs:
       - run:
           name: scan backend
           command: |
-            exit 1
-            # cd backend
-            # npm i
-            # npm audit 
-      # Checkout code from git
-      # Restore from cache
-      # Your job code here
+            cd backend
+            npm i
+            npm audit 
 
 
   # deploy-infrastructure:
