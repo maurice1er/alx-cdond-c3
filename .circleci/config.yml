@@ -79,22 +79,23 @@ jobs:
       - run:
           name: unit testing frontend
           command: |
-            exit 1
-            # cd frontend
-            # npm i
-            # npm test
+            cd frontend
+            npm i
+            npm test
             
   test-backend:
     docker:
       - image: circleci/node:13.8.0 
     steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-deps]
       - run: 
-          name: unit testing backend|
+          name: unit testing backend
           command: | 
-            exit 1
-            # - checkout
-            # Restore from cache
-            # Your job code here
+            cd backend
+            npm i
+            npm test
 
 
   # scan-frontend:
@@ -295,10 +296,10 @@ workflows:
           requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - scan-backend:
-      #     requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - scan-backend:
+          requires: [build-backend]
       # - deploy-infrastructure:
       #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
