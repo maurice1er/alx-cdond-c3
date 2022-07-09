@@ -79,10 +79,21 @@ jobs:
       - run:
           name: unit testing
           command: |
-            cd frontend
-            npm i
-            npm test
+            exit 1
+            # cd frontend
+            # npm i
+            # npm test
             
+  test-backend:
+    docker:
+      - image: circleci/node:13.8.0 
+    steps:
+      exit 1
+      # - checkout
+      # Restore from cache
+      # Your job code here
+
+
   # scan-frontend:
   #   docker:
   #     - image: cimg/node:13.8.0
@@ -96,13 +107,6 @@ jobs:
   #           cd frontend
   #           npm i
   #           npm audit 
-  # test-backend:
-  #   docker:
-  #     # Docker image here
-  #   steps:
-  #     # Checkout code from git
-  #     # Restore from cache
-  #     # Your job code here
             
 
   # scan-backend:
