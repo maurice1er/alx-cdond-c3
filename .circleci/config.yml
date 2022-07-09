@@ -51,6 +51,24 @@ jobs:
           paths: [frontend/node_modules]
           key: frontend-deps
 
+  build-backend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-deps]
+      - run:
+          name: Back-end build
+          command: |
+            cd backend
+            npm i
+            npm run build
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-deps
+                
+
   test-frontend:
     docker:
       - image: circleci/node:13.8.0 
@@ -65,36 +83,19 @@ jobs:
             npm i
             npm test
             
-  scan-frontend:
-    docker:
-      - image: cimg/node:13.8.0
-    steps:
-      - checkout
-      - restore_cache: 
-          keys: [frontend-deps]
-      - run:
-          name: scan frontend
-          command: |
-            cd frontend
-            npm i
-            npm audit 
-
-  # build-backend:
+  # scan-frontend:
   #   docker:
-  #     - image: circleci/node:13.8.0
+  #     - image: cimg/node:13.8.0
   #   steps:
   #     - checkout
-  #     - restore_cache:
-  #         keys: [backend-build]
+  #     - restore_cache: 
+  #         keys: [frontend-deps]
   #     - run:
-  #         name: Back-end build
+  #         name: scan frontend
   #         command: |
-  #            # Your code here
-  #            exit 1
-  #     - save_cache:
-  #         paths: [backend/node_modules]
-  #         key: backend-build
-                
+  #           cd frontend
+  #           npm i
+  #           npm audit 
   # test-backend:
   #   docker:
   #     # Docker image here
@@ -282,13 +283,13 @@ workflows:
   default:
     jobs:
       - build-frontend
+      - build-backend
       - test-frontend:
           requires: [build-frontend]
-      - scan-frontend:
-          requires: [build-frontend]
-      # - build-backend
-      # - test-backend:
-      #     requires: [build-backend]
+      - test-backend:
+          requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
       # - scan-backend:
       #     requires: [build-backend]
       # - deploy-infrastructure:
