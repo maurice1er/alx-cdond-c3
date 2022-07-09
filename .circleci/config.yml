@@ -44,7 +44,6 @@ jobs:
           name: Build front-end 
           command: |
             npm i
-            npm run build 
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
