@@ -77,7 +77,7 @@ jobs:
       - restore_cache:
           keys: [frontend-deps]
       - run:
-          name: unit testing
+          name: unit testing frontend
           command: |
             exit 1
             # cd frontend
@@ -88,10 +88,13 @@ jobs:
     docker:
       - image: circleci/node:13.8.0 
     steps:
-      exit 1
-      # - checkout
-      # Restore from cache
-      # Your job code here
+      - run: 
+          name: unit testing backend|
+          command: | 
+            exit 1
+            # - checkout
+            # Restore from cache
+            # Your job code here
 
 
   # scan-frontend:
