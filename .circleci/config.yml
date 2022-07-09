@@ -36,7 +36,7 @@ version: 2.1
 jobs:
   build-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -62,7 +62,16 @@ jobs:
           name: unit testing
           command: |
             cd frontend
-            npm run test
+            npm i
+            npm test
+            
+  # scan-frontend:
+  #   docker:
+  #     # Docker image here
+  #   steps:
+  #     # Checkout code from git
+  #     # Restore from cache
+  #     # Your job code here
 
   # build-backend:
   #   docker:
@@ -88,13 +97,6 @@ jobs:
   #     # Restore from cache
   #     # Your job code here
             
-  # scan-frontend:
-  #   docker:
-  #     # Docker image here
-  #   steps:
-  #     # Checkout code from git
-  #     # Restore from cache
-  #     # Your job code here
 
   # scan-backend:
   #   docker:
@@ -276,13 +278,13 @@ workflows:
       - build-frontend
       - test-frontend:
           requires: [build-frontend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
       # - build-backend
       # - test-backend:
       #     requires: [build-backend]
       # - scan-backend:
       #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
       # - deploy-infrastructure:
       #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
