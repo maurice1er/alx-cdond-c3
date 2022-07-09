@@ -39,14 +39,16 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [frontend-build]
+          keys: [frontend-deps]
       - run:
           name: Build front-end 
           command: |
+            cd frontend
             npm i
+            npm run build
       - save_cache:
           paths: [frontend/node_modules]
-          key: frontend-build
+          key: frontend-deps
 
   test-frontend:
     docker:
@@ -54,11 +56,12 @@ jobs:
     steps:
       - checkout 
       - restore_cache:
-          keys: [frontend-build]
+          keys: [frontend-deps]
       - run:
           name: unit testing
           command: |
-            npm test
+            cd frontend
+            npm run test
 
   # build-backend:
   #   docker:
