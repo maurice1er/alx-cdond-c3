@@ -98,28 +98,40 @@ jobs:
             npm test
 
 
-  # scan-frontend:
-  #   docker:
-  #     - image: cimg/node:13.8.0
-  #   steps:
-  #     - checkout
-  #     - restore_cache: 
-  #         keys: [frontend-deps]
-  #     - run:
-  #         name: scan frontend
-  #         command: |
-  #           cd frontend
-  #           npm i
-  #           npm audit 
+  scan-frontend:
+    docker:
+      - image: cimg/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache: 
+          keys: [frontend-deps]
+      - run:
+          name: scan frontend
+          command: |
+            exit 1
+            # cd frontend
+            # npm i
+            # npm audit 
             
 
-  # scan-backend:
-  #   docker:
-  #     # Docker image here
-  #   steps:
-  #     # Checkout code from git
-  #     # Restore from cache
-  #     # Your job code here
+  scan-backend:
+    docker:
+      # Docker image here
+    steps:
+      - checkout
+      - restore_cache: 
+          keys: [backend-deps]
+      - run:
+          name: scan backend
+          command: |
+            exit 1
+            # cd backend
+            # npm i
+            # npm audit 
+      # Checkout code from git
+      # Restore from cache
+      # Your job code here
+
 
   # deploy-infrastructure:
   #   docker:
