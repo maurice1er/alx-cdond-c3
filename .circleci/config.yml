@@ -55,7 +55,10 @@ jobs:
       - checkout 
       - restore_cache:
           keys: [frontend-build]
-      # Your job code here
+      - run:
+          name: unit testing
+          command: |
+            npm test
 
   # build-backend:
   #   docker:
