@@ -13,17 +13,20 @@ commands:
           channel: cicd-channel
           template: basic_fail_1 
 
-#   destroy-environment:
-#     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-#     parameters:
-#       # Add parameter here   
-#     steps:
-#       - run:
-#           name: Destroy environments
-#           when: on_fail
-#           command: |
-#             # Your code here
-#             exit 1
+  destroy-environment:
+    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    parameters:
+      Workflow_ID:
+        type: string
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+            aws cloudformation delete-stack --stack-name StackBackendUdaPeople-<< parameters.Workflow_ID >>
+            aws s3 rm s3://udapeople-<<parameters.Workflow_ID>> --recursive
+            aws cloudformation delete-stack --stack-name StackFrontUdaPeople-<< parameters.Workflow_ID >>
 
 #   revert-migrations:
 #     description: Revert the last migration if successfully run in the current workflow.
@@ -197,15 +200,6 @@ jobs:
       - aws-cli/install
       - node/install
       - run:
-          name: Get backend url
-          command: |
-            BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text)
-            echo http://${BACKEND_PUBLIC_IP}:3030
-          
-      - run:
           name: Backend smoke test.
           command: |
             BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
@@ -214,21 +208,22 @@ jobs:
               --output text)
             export API_URL=http://${BACKEND_PUBLIC_IP}:3030
             if curl -s $API_URL/api/status | grep "ok"
-            then 
-              exit 0 
-            else 
+            then
+              exit 0
+            else
               exit 1
             fi
       - run:
           name: Frontend smoke test.
           command: |
-            FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-${AWS_DEFAULT_REGION}.amazonaws.com
-            if curl -s $FRONTEND_WEBSITE | grep "ok"
-            then 
-              exit 0 
-            else 
+            FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
+            if curl -s $FRONTEND_WEBSITE | grep "Welcome"
+            then
+              exit 0
+            else
               exit 1
             fi
+      # - destroy-environment
 
       # Here's where you will add some code to rollback on failure  
 
