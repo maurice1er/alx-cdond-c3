@@ -197,10 +197,6 @@ jobs:
       - aws-cli/install
       - node/install
       - run:
-          name: Install dependencies
-          command: |
-            npm i
-      - run:
           name: Get backend url
           command: |
             BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
