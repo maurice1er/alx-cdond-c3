@@ -13,17 +13,20 @@ commands:
           channel: cicd-channel
           template: basic_fail_1 
 
-#   destroy-environment:
-#     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-#     parameters:
-#       # Add parameter here   
-#     steps:
-#       - run:
-#           name: Destroy environments
-#           when: on_fail
-#           command: |
-#             # Your code here
-#             exit 1
+  destroy-environment:
+    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    parameters:
+      Workflow_ID:  
+        type: string
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+            aws cloudformation delete-stack --stack-name StackBackendUdaPeople-<< parameters.Workflow_ID >>
+            aws s3 rm s3://udapeople-<< parameters.Workflow_ID >> --recursive
+            aws cloudformation delete-stack --stack-name StackFrontUdaPeople-<< parameters.Workflow_ID >>
 
 #   revert-migrations:
 #     description: Revert the last migration if successfully run in the current workflow.
@@ -232,9 +235,8 @@ jobs:
               exit 0 
             else 
               exit 1
-            fi
-
-      # Here's where you will add some code to rollback on failure  
+            fi  
+      - destroy-environment
 
   # cloudfront-update:
   #   docker:
@@ -380,7 +382,8 @@ workflows:
             branches:
               only: [master]
       - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
+          requires: [test-backend, test-frontend]
+          # requires: [deploy-backend, deploy-frontend]
 
       # - configure-infrastructure:
       #     requires: [deploy-infrastructure]
