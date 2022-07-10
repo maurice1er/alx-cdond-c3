@@ -188,7 +188,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy-environment  
+      # - destroy-environment  
 
   smoke-test:
     docker:
