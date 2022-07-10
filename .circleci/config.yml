@@ -339,7 +339,7 @@ workflows:
       - notify_on_success:
           requires:
             - test-frontend
-            - test-backend 
+            # - test-backend 
             - scan-frontend 
             - scan-backend 
       # - deploy-infrastructure:
