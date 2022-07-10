@@ -13,20 +13,17 @@ commands:
           channel: cicd-channel
           template: basic_fail_1 
 
-  destroy-environment:
-    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
-    parameters:
-      Workflow_ID:  
-        type: string
-        default: ${CIRCLE_WORKFLOW_ID:0:7}
-    steps:
-      - run:
-          name: Destroy environments
-          when: on_fail
-          command: |
-            aws cloudformation delete-stack --stack-name BackendUdaPeople-<< parameters.Workflow_ID >>
-            aws s3 rm s3://udapeople-<< parameters.Workflow_ID >> --recursive
-            aws cloudformation delete-stack --stack-name FrontUdaPeople-<< parameters.Workflow_ID >>
+#   destroy-environment:
+#     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+#     parameters:
+#       # Add parameter here   
+#     steps:
+#       - run:
+#           name: Destroy environments
+#           when: on_fail
+#           command: |
+#             # Your code here
+#             exit 1
 
 #   revert-migrations:
 #     description: Revert the last migration if successfully run in the current workflow.
@@ -153,6 +150,8 @@ jobs:
 
 
   deploy-infrastructure:
+    # docker:
+    #   - image: cimg/base:stable
     executor: aws-cli/default
     steps:
       - checkout 
@@ -162,8 +161,8 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              --tags project=BackendUdaPeople-${CIRCLE_WORKFLOW_ID:0:7} \
-              --stack-name "BackendUdaPeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=BackendUdaPeople \
+              --stack-name "StackBackendUdaPeople-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
               # exit 1
       - run:
@@ -171,8 +170,8 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --tags project=FrontUdaPeople-${CIRCLE_WORKFLOW_ID:0:7} \
-              --stack-name "FrontUdaPeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=FrontUdaPeople \
+              --stack-name "StackFrontUdaPeople-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
               # exit 1
       - run:
@@ -188,7 +187,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      # - destroy-environment  
+      # Here's where you will add some code to rollback on failure 
 
   smoke-test:
     docker:
@@ -233,8 +232,9 @@ jobs:
               exit 0 
             else 
               exit 1
-            fi  
-      - destroy-environment
+            fi
+
+      # Here's where you will add some code to rollback on failure  
 
   # cloudfront-update:
   #   docker:
