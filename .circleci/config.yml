@@ -24,9 +24,9 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name StackBackendUdaPeople-<< parameters.Workflow_ID >>
+            aws cloudformation delete-stack --stack-name BackendUdaPeople-<< parameters.Workflow_ID >>
             aws s3 rm s3://udapeople-<< parameters.Workflow_ID >> --recursive
-            aws cloudformation delete-stack --stack-name StackFrontUdaPeople-<< parameters.Workflow_ID >>
+            aws cloudformation delete-stack --stack-name FrontUdaPeople-<< parameters.Workflow_ID >>
 
 #   revert-migrations:
 #     description: Revert the last migration if successfully run in the current workflow.
@@ -153,8 +153,6 @@ jobs:
 
 
   deploy-infrastructure:
-    # docker:
-    #   - image: cimg/base:stable
     executor: aws-cli/default
     steps:
       - checkout 
@@ -164,8 +162,8 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              --tags project=BackendUdaPeople \
-              --stack-name "StackBackendUdaPeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=BackendUdaPeople-${CIRCLE_WORKFLOW_ID:0:7} \
+              --stack-name "BackendUdaPeople-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
               # exit 1
       - run:
@@ -173,8 +171,8 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --tags project=FrontUdaPeople \
-              --stack-name "StackFrontUdaPeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=FrontUdaPeople-${CIRCLE_WORKFLOW_ID:0:7} \
+              --stack-name "FrontUdaPeople-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
               # exit 1
       - run:
